@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import Image from "next/legacy/image";
+import Image from "next/image";
 import { StudentLifeLogo, UserIcon } from "../assets";
 import { AuthContext } from "../authProvider";
 import User, { toUser } from "../../data/User";
@@ -17,15 +17,18 @@ const Header: React.FC<{ pageName: string }> = ({ pageName }) => {
 	const authContext = React.useContext(AuthContext);
 
 	return (
-		<nav className='navbar navbar-expand-sm bg-light p-0 fixed-top'>
+        <nav className='navbar navbar-expand-sm bg-light p-0 fixed-top'>
 			<div className='container-fluid p-0'>
 				<Link href='/home'>
 					<Image
-						src={StudentLifeLogo}
-						alt='student'
-						height='60'
-						width='60'
-					></Image>
+                        src={StudentLifeLogo}
+                        alt='student'
+                        height='60'
+                        width='60'
+                        style={{
+                            maxWidth: "100%",
+                            height: "auto"
+                        }}></Image>
 				</Link>
 
 				{/* Dropdown Menu */}
@@ -105,7 +108,15 @@ const Header: React.FC<{ pageName: string }> = ({ pageName }) => {
 						data-bs-toggle='dropdown'
 						aria-expanded='false'
 					>
-						<Image src={UserIcon} alt='profile' width='30' height='30'></Image>
+						<Image
+                            src={UserIcon}
+                            alt='profile'
+                            width='30'
+                            height='30'
+                            style={{
+                                maxWidth: "100%",
+                                height: "auto"
+                            }}></Image>
 					</button>
 					<ul className='dropdown-menu'>
 						<li>
@@ -125,7 +136,7 @@ const Header: React.FC<{ pageName: string }> = ({ pageName }) => {
 				</div>
 			</div>
 		</nav>
-	);
+    );
 };
 
 export default Header;

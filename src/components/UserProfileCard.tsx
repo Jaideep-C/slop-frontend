@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Image from "next/legacy/image";
+import Image from "next/image";
 import Script from "next/script";
 import student from "../../../assets/student.png";
 import user from "../../../assets/user.png";
@@ -57,12 +57,15 @@ const UserProfileCard: React.FC = () => {
 							{user.fullName}
 							{user.userRole !== "USER" ? (
 								<Image
-									src={user.userRole === "CLUB" ? ClubVerified : AdminVerified}
-									alt='verified'
-									height={20}
-									width={20}
-									color='blue'
-								/>
+                                    src={user.userRole === "CLUB" ? ClubVerified : AdminVerified}
+                                    alt='verified'
+                                    height={20}
+                                    width={20}
+                                    color='blue'
+                                    style={{
+                                        maxWidth: "100%",
+                                        height: "auto"
+                                    }} />
 							) : (
 								<></>
 							)}

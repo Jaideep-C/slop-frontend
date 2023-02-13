@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Image from "next/legacy/image";
+import Image from "next/image";
 import Script from "next/script";
 import student from "../../../assets/student.png";
 import user from "../../../assets/user.png";
@@ -38,7 +38,15 @@ function Clubs() {
 				{/* CodeX Card */}
 				<div className='col'>
 					<div className='card'>
-						<Image className='card-img-top' src={CodeX} alt='Card image cap' />
+						<Image
+							className='card-img-top'
+							src={CodeX}
+							alt='Card image cap'
+							style={{
+								maxWidth: "100%",
+								height: "auto",
+							}}
+						/>
 						<div className='card-body'>
 							<h5 className='card-title'>CodeX</h5>
 							<p className='card-text'>
@@ -54,7 +62,15 @@ function Clubs() {
 				{/* Kalakrithi Card */}
 				<div className='col'>
 					<div className='card'>
-						<Image className='card-img-top' src={kala} alt='Card image cap' />
+						<Image
+							className='card-img-top'
+							src={kala}
+							alt='Card image cap'
+							style={{
+								maxWidth: "100%",
+								height: "auto",
+							}}
+						/>
 						<div className='card-body'>
 							<h5 className='card-title'>Kalakrithi</h5>
 							<p className='card-text'>
@@ -70,7 +86,15 @@ function Clubs() {
 				{/* Gusac Card */}
 				<div className='col'>
 					<div className='card'>
-						<Image className='card-img-top' src={gusac} alt='Card image cap' />
+						<Image
+							className='card-img-top'
+							src={gusac}
+							alt='Card image cap'
+							style={{
+								maxWidth: "100%",
+								height: "auto",
+							}}
+						/>
 						<div className='card-body'>
 							<h5 className='card-title'>Gusac</h5>
 							{/* eslint-disable-next-line react/no-unescaped-entities */}
@@ -88,14 +112,18 @@ function Clubs() {
 							className='card-img-top'
 							src={gstudio}
 							alt='Card image cap'
+							style={{
+								maxWidth: "100%",
+								height: "auto",
+							}}
 						/>
 						<div className='card-body'>
 							<h5 className='card-title'>Gstudio</h5>
 							<p className='card-text'>
 								We decide the vibe of photography, much more than just media 😌
 							</p>
-							<Link href='/clubs/codex'>
-								<a className='btn btn-light'>More</a>
+							<Link className='btn btn-light' href='/clubs/codex'>
+								More
 							</Link>
 						</div>
 					</div>

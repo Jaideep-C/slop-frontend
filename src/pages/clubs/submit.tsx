@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Image from "next/legacy/image";
+import Image from "next/image";
 import Script from "next/script";
 import student from "../../../assets/student.png";
 import "flatpickr/dist/themes/material_green.css";

@@ -1,5 +1,5 @@
 import React from "react";
-import Image from "next/legacy/image";
+import Image from "next/image";
 import { GitamLogo, StudentLifeLogo } from "./assets";
 type Prop = {
   style: {
@@ -15,7 +15,10 @@ const AuthHeader: React.FC<Prop> = ({ style }) => {
           alt="gitam-logo"
           width={GitamLogo.width}
           height={GitamLogo.height}
-        />
+          style={{
+            maxWidth: "100%",
+            height: "auto"
+          }} />
       </div>
       <div className={style.student}>
         <Image
@@ -23,7 +26,10 @@ const AuthHeader: React.FC<Prop> = ({ style }) => {
           alt="student-life-logo"
           width={StudentLifeLogo.width}
           height={StudentLifeLogo.height}
-        />
+          style={{
+            maxWidth: "100%",
+            height: "auto"
+          }} />
       </div>
     </div>
   );
