@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import { StudentLifeLogo, UserIcon } from "../assets";
 import { AuthContext } from "../authProvider";
 import User, { toUser } from "../../data/User";
