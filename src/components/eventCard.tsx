@@ -31,9 +31,7 @@ const EventCard: React.FC<{
 						<div className='row'>
 							<div className='col'>
 								<Link href={`/events/${event.slug}`}>
-									<a>
-										<h2>{event.name}</h2>
-									</a>
+									<h2>{event.name}</h2>
 								</Link>
 							</div>
 							<div className='col'>

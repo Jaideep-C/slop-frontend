@@ -69,13 +69,11 @@ const UserProfileCard: React.FC = () => {
 						</p>
 						<p className='card-title'>{user.bio}</p>
 						<Link href='../settings' style={{ color: "black" }}>
-							<a>
-								<FontAwesomeIcon
-									className={style.settingsicon}
-									icon={solid("gear")}
-									size='1x'
-								/>
-							</a>
+							<FontAwesomeIcon
+								className={style.settingsicon}
+								icon={solid("gear")}
+								size='1x'
+							/>
 						</Link>
 					</div>
 				</div>

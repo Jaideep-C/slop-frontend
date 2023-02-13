@@ -20,14 +20,12 @@ const Header: React.FC<{ pageName: string }> = ({ pageName }) => {
 		<nav className='navbar navbar-expand-sm bg-light p-0 fixed-top'>
 			<div className='container-fluid p-0'>
 				<Link href='/home'>
-					<a>
-						<Image
-							src={StudentLifeLogo}
-							alt='student'
-							height='60'
-							width='60'
-						></Image>
-					</a>
+					<Image
+						src={StudentLifeLogo}
+						alt='student'
+						height='60'
+						width='60'
+					></Image>
 				</Link>
 
 				{/* Dropdown Menu */}
