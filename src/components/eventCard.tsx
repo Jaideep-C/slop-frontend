@@ -31,20 +31,20 @@ const EventCard: React.FC<{
 						<div className='row'>
 							<div className='col'>
 								<Link href={`/events/${event.slug}`}>
-									<h2>{event.name}</h2>
+									<a>
+										<h2>{event.name}</h2>
+									</a>
 								</Link>
 							</div>
 							<div className='col'>
 								<Link href={`/events/${event.slug}/edit`}>
-									<a>
-										{" "}
-										<button className='btn mx-5'>
-											<FontAwesomeIcon
-												className=''
-												icon={solid("pen-to-square")}
-											/>
-										</button>
-									</a>
+									{" "}
+									<button className='btn mx-5'>
+										<FontAwesomeIcon
+											className=''
+											icon={solid("pen-to-square")}
+										/>
+									</button>
 								</Link>
 								<Popup
 									trigger={

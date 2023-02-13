@@ -20,12 +20,14 @@ const Header: React.FC<{ pageName: string }> = ({ pageName }) => {
 		<nav className='navbar navbar-expand-sm bg-light p-0 fixed-top'>
 			<div className='container-fluid p-0'>
 				<Link href='/home'>
-					<Image
-						src={StudentLifeLogo}
-						alt='student'
-						height='60'
-						width='60'
-					></Image>
+					<a>
+						<Image
+							src={StudentLifeLogo}
+							alt='student'
+							height='60'
+							width='60'
+						></Image>
+					</a>
 				</Link>
 
 				{/* Dropdown Menu */}
@@ -91,11 +93,9 @@ const Header: React.FC<{ pageName: string }> = ({ pageName }) => {
 				{/* Create a POST */}
 				<div className='btn-group'>
 					<Link href='/clubs/submit'>
-						<a>
-							<button className='btn btn-light btn-lg' type='button'>
-								<FontAwesomeIcon icon={solid("square-plus")} />
-							</button>
-						</a>
+						<button className='btn btn-light btn-lg' type='button'>
+							<FontAwesomeIcon icon={solid("square-plus")} />
+						</button>
 					</Link>
 				</div>
 
