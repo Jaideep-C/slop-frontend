@@ -1,221 +1,195 @@
-import { Router } from "@mui/icons-material";
-import { constants } from "fs/promises";
-import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import User from "../../data/User";
 import api from "../../util/api";
 import { AuthContext } from "../authProvider";
-import ProPicUpdate from "../../components/proPicUpdate";
 
+type Body = {
+  fullName: string;
+  bio: string;
+  userSpecialization: string;
+  userSchool: string;
+};
 const UpdateUserForm: React.FC<{ user: User }> = ({ user }) => {
   const authContext = React.useContext(AuthContext);
-  const router = useRouter();
-  const [gst, setGst] = useState("none");
-  const [gsb, setGsb] = useState("none");
-  const [gss, setGss] = useState("none");
-  const [fullName, setFullName] = React.useState<string>(user.fullName);
-  const [bio, setBio] = React.useState<string>(user.bio);
-  const [school, setSchool] = React.useState<string>("GST");
-  const [specialization, setSpecialization] = React.useState<string>("CSE");
-  const [err, setErr] = React.useState<string | undefined>();
+  const [formdata, setFormdata] = useState<FormData>(
+    (() => {
+      const formdata = new FormData();
+      formdata.append(
+        "body",
+        JSON.stringify({
+          fullName: user.fullName,
+          bio: user.bio,
+          userSpecialization: user.userSpecilization,
+          userSchool: user.userSchool,
+        })
+      );
+      formdata.append("profilePicture", "");
+      return formdata;
+    })()
+  );
+  const [err, setErr] = useState<string>("");
+  const [specializationList, setSpecializationList] = useState<string[]>([
+    "Select a specialization",
+  ]);
+  const [body, setBody] = useState<Body>({
+    fullName: user.fullName,
+    bio: user.bio,
+    userSpecialization: user.userSpecilization ?? "Select specialization",
+    userSchool: user.userSchool ?? "Select school",
+  });
+  const schoolList = ["Select school", "GST", "GSB", "GSC"];
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files && e.target.files[0];
+    if (file)
+      setFormdata((prev) => {
+        prev.append("profilePicture", file);
+        return prev;
+      });
+  };
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    const { name, value } = e.currentTarget;
+    setBody({ ...body, [name]: value });
+  };
   const onSubmit = async () => {
-    if (!fullName) {
-      setErr("Full name should not be empty!");
-      return;
-    } else if (/\d/.test(fullName)) {
-      setErr("Fullname should not contain a number");
-      return;
+    const res = await api.patch(`/users/${authContext.userId}`, formdata, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${authContext.authState}`,
+      },
+    });
+    if (res.status === 200) {
+    } else {
+      setErr(res.data.message);
     }
-    console.log(authContext.authState);
-    const res = await api.patch(
-      `/users/${user.id}`,
-      { fullName, bio, school, specialization },
-      {
-        headers: { Authorization: `Bearer ${authContext.authState}` },
-      }
-    );
-    if (res.status === 200) await router.reload();
-    setErr(undefined);
+  };
+  const validateBody = (body: Body) => {
+    if (body.bio.length < 3) {
+      setErr("Bio must be at least 3 characters long");
+      return false;
+    }
+    if (body.userSchool === "Select school") {
+      setErr("Please select a school");
+      return false;
+    }
+    if (body.userSpecialization === "Select specialization") {
+      setErr("Please select a specialization");
+      return false;
+    }
+    return true;
+  };
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (validateBody(body)) await onSubmit();
   };
   useEffect(() => {
-    if (school === "GST") {
-      setGst("block");
-      setGsb("none");
-      setGss("none");
+    setFormdata((prev) => {
+      prev.delete("body");
+      prev.append("body", JSON.stringify(body));
+      return prev;
+    });
+    switch (body.userSchool) {
+      case "GST":
+        setSpecializationList([
+          "Select specialization",
+          "CSE",
+          "EEE",
+          "ME",
+          "ECE",
+          "CE",
+        ]);
+        break;
+      case "GSB":
+        setSpecializationList(["Select specialization", "BBA", "BBS"]);
+        break;
+      case "GSC":
+        setSpecializationList(["Select specialization", "BSC", "MSC"]);
+        break;
     }
-    if (school === "GSB") {
-      setGst("none");
-      setGsb("block");
-      setGss("none");
-    }
-    if (school === "GSS") {
-      setGst("none");
-      setGsb("none");
-      setGss("block");
-    }
-  }, [school]);
-
-  const widget = (
-    <div className="card mt-4" style={{ width: "100%" }}>
-      <div className="m-4">
-        <label htmlFor="FullName" className="form-label">
-          Full Name
-        </label>
-        <input
-          type="text"
-          className="form-control"
-          id="FullName"
-          aria-describedby="emailHelp"
-          defaultValue={fullName}
-          onChange={(e) => {
-            const { value } = e.target;
-            setFullName(value.trim());
-          }}
-        />
-        <ProPicUpdate />
-        <div className="mb-3 my-3">
-          <label htmlFor="Bio" className="form-label">
+  }, [body]);
+  return (
+    <>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label htmlFor="fullName" className="form-label">
+            Full Name
+          </label>
+          <input
+            type="text"
+            className="form-control"
+            name="fullName"
+            defaultValue={body.fullName}
+          />
+        </div>
+        <div>
+          <label htmlFor="bio" className="form-label">
             Bio
           </label>
           <input
             type="text"
             className="form-control"
-            id="Bio"
-            defaultValue={bio}
-            onChange={(e) => {
-              const { value } = e.target;
-              setBio(value);
-            }}
+            name="bio"
+            defaultValue={body.bio}
+            onChange={handleInputChange}
           />
         </div>
-        <div className="mb-3 my-3">
-          <label htmlFor="school" className="form-label">
+        <div>
+          <label htmlFor="profilePicture" className="form-label">
+            Profile Picture
+          </label>
+          <input
+            type="file"
+            className="form-control"
+            name="profilePicture"
+            onChange={handleFileChange}
+          />
+        </div>
+        <div>
+          <label htmlFor="userSchool" className="form-label">
             School
           </label>
           <select
-            className="form-select"
-            aria-label="Default select example"
-            id="school"
-            defaultValue={school}
+            name="userSchool"
+            className="form-control"
             onChange={(e) => {
-              const { value } = e.target;
-              setSchool(value);
+              const { name, value } = e.currentTarget;
+              setBody({ ...body, [name]: value });
             }}
+            defaultValue={body.userSchool}
           >
-            <option selected>
-              select <span className={"lower-triangle"}>▼</span>
-            </option>
-            <option value="GST">Gitam School Of Technology (GST)</option>
-            <option value="GSS">Gitam School Of Science (GSS)</option>
-            <option value="GSB">Gitam School Of Business (GSB)</option>
+            {schoolList.map((s) => {
+              return (
+                <option value={s} key={s}>
+                  {s}
+                </option>
+              );
+            })}
           </select>
         </div>
-        <div className="mb-3 my-3" style={{ display: gst }}>
-          <label htmlFor="specialization" className="form-label">
+        <div>
+          <label htmlFor="userSpecialization" className="form-label">
             Specialization
           </label>
           <select
-            className="form-select"
-            aria-label="Default select example"
-            id="specialization"
-            defaultValue={school}
+            name="userSpecialization"
+            className="form-control"
+            defaultValue={body.userSpecialization}
             onChange={(e) => {
-              const { value } = e.target;
-              setSpecialization(value);
+              const { name, value } = e.currentTarget;
+              setBody({ ...body, [name]: value });
             }}
           >
-            <option selected>--select--</option>
-            <option value="CSE">
-              Computer Science and Engineering (CSE) - Regular
-            </option>
-            <option value="CSEAIML">
-              CSE - Specialized with Artificial Intelligence and Machine
-              Learning
-            </option>
-            <option value="CSECS">
-              CSE - Specialized with Cyber Security{" "}
-            </option>
-            <option value="CSEDS">CSE - Specialized with Data Science </option>
-            <option value="CSEIOT">
-              CSE - Specialized with Internet Of Things{" "}
-            </option>
-            <option value="CSEBS">
-              CSE - Specialized with Business Systems{" "}
-            </option>
-            <option value="ECE">
-              Electronics and Communication Engineering (ECE) - Regular{" "}
-            </option>
-            <option value="ECEAIML">
-              ECE - Specialized with Artificial Intelligence and Machine
-              Learning{" "}
-            </option>
-            <option value="EEE">
-              Electrical and Electronics Engineering - EEE{" "}
-            </option>
-            <option value="MECH">Mechanical Engineering - (MECH) </option>
+            {specializationList.map((s) => {
+              return <option value={s}>{s}</option>;
+            })}
           </select>
         </div>
-        <div className="mb-3 my-3" style={{ display: gsb }}>
-          <label htmlFor="specialization" className="form-label">
-            Specialization
-          </label>
-          <select
-            className="form-select"
-            aria-label="Default select example"
-            id="specialization"
-            defaultValue={school}
-            onChange={(e) => {
-              const { value } = e.target;
-              setSpecialization(value);
-            }}
-          >
-            <option selected>--select--</option>
-            <option value="BBA">
-              Bachelor of Business Administration (BBA) - Regular
-            </option>
-            <option value="BBAFM">
-              BBA - Specialized with Financial Management
-            </option>
-            <option value="BBAMM">
-              BBA - Specialized with Marketing Management
-            </option>
-            <option value="BBAHR">
-              BBA - Specialized with Human Resource Management
-            </option>
-          </select>
-        </div>
-        <div className="mb-3 my-3" style={{ display: gss }}>
-          <label htmlFor="specialization" className="form-label">
-            Specialization
-          </label>
-          <select
-            className="form-select"
-            aria-label="Default select example"
-            id="specialization"
-            defaultValue={school}
-            onChange={(e) => {
-              const { value } = e.target;
-              setSpecialization(value);
-            }}
-          >
-            <option selected>--select--</option>
-            <option value={"BCA"}>
-              Bachelor Of Computer Applications (BCA)
-            </option>
-            <option value={"MCA"}>
-              Masters Of Computer Applications (MCA)
-            </option>
-          </select>
-        </div>
-        {err ? <p style={{ color: "red" }}>{err}</p> : <></>}
-        <button type="submit" className="btn btn-primary" onClick={onSubmit}>
-          Submit
-        </button>
-      </div>
-    </div>
+        {err ? <div className="text-danger">{err}</div> : <></>}
+        <br />
+        <button className="btn btn-light">submit</button>
+      </form>
+    </>
   );
-
-  return widget;
 };
 
 export default UpdateUserForm;

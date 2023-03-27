@@ -6,6 +6,7 @@ import api from "../../util/api";
 import User, { toUser } from "../../data/User";
 import UpdateUserForm from "../../components/forms/userUpdateForm";
 import Head from "next/head";
+import ChangePassword from "@/components/forms/change-password";
 
 function Settings() {
   const authContext = React.useContext(AuthContext);
@@ -74,7 +75,7 @@ function Settings() {
             Password
           </button>
         </li>
-        <li className="nav-item" role="presentation">
+        {/* <li className="nav-item" role="presentation">
           <button
             className="nav-link"
             id="contact-tab"
@@ -87,7 +88,7 @@ function Settings() {
           >
             Ticket Form
           </button>
-        </li>
+        </li> */}
       </ul>
       <div className="tab-content" id="myTabContent">
         <div
@@ -107,40 +108,10 @@ function Settings() {
           tabIndex={0}
         >
           <div className="card mt-4" style={{ width: "100%" }}>
-            <form className="p-3">
-              <h4 className="mb-4">Change Password</h4>
-              <div className="mb-4">
-                <input
-                  type="password"
-                  placeholder="Old Password"
-                  className="form-control"
-                  id="exampleInputPassword1"
-                />
-              </div>
-              <div className="mb-4">
-                <input
-                  type="password"
-                  placeholder="New Password"
-                  className="form-control"
-                  id="exampleInputPassword1"
-                />
-              </div>
-              <div className="mb-4">
-                <input
-                  type="password"
-                  placeholder="Confirm Password"
-                  className="form-control"
-                  id="exampleInputPassword1"
-                />
-              </div>
-
-              <button type="submit" className="btn btn-primary">
-                Update
-              </button>
-            </form>
+            <ChangePassword />
           </div>
         </div>
-        <div
+        {/* <div
           className="tab-pane fade"
           id="contact-tab-pane"
           role="tabpanel"
@@ -157,7 +128,7 @@ function Settings() {
           tabIndex={0}
         >
           ...
-        </div>
+        </div> */}
       </div>
     </div>
   );
