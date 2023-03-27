@@ -4,6 +4,7 @@ import "../../styles/globals.css";
 import "../../styles/main.scss";
 import AuthProvider from "../components/authProvider";
 import "reflect-metadata";
+import "react-loading-skeleton/dist/skeleton.css";
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <AuthProvider>

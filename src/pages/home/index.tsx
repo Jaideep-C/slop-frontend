@@ -53,6 +53,24 @@ function Home() {
   //   console.log(isActive);
   //   console.log(events?.map((event) => event.numberOfLikes));
   // }, [events]);
+  if (events && events.length === 0)
+    return (
+      <>
+        <Head>
+          <title>Home</title>
+        </Head>
+        <Header pageName={"Home"} />
+        <div className="text-center" style={{ margin: "100px" }}>
+          <h1>
+            Follow some{" "}
+            <Link href="/clubs/">
+              <a>clubs</a>
+            </Link>{" "}
+            to see home feed
+          </h1>
+        </div>
+      </>
+    );
   const widget = (
     <>
       <Head>

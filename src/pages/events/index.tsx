@@ -20,6 +20,7 @@ import Event from "../../data/Event";
 import EventCard from "../../components/eventCard";
 import { NextPage } from "next";
 import Head from "next/head";
+import { EventPost } from "@/components/Post";
 
 const EventsPage: NextPage = () => {
   const authContext = React.useContext(AuthContext);
@@ -42,9 +43,29 @@ const EventsPage: NextPage = () => {
         <title>Events</title>
       </Head>
       <Header pageName={"Events"} />
-      {events.map((e) => (
-        <EventCard event={e} key={e.id} setEvents={setEvents} />
-      ))}
+      <div className="container-md px-4 text-center">
+        ALL EVENTS
+        {/* Left Content */}
+        <div className="row">
+          <div className="col">
+            {/* LEFT */}
+            <div className="p-1"> </div>
+            {/* LEFT */}
+          </div>
+          <div className="col">
+            {events.map((event) => (
+              <EventPost event={event} key={event.slug} />
+            ))}
+          </div>
+
+          {/*  Right Content */}
+          <div className="col">
+            {/* RIGHT */}
+            <div className="p-1"></div>
+            {/* RIGHT */}
+          </div>
+        </div>
+      </div>
     </div>
   );
   return <AuthComponent child={widget} />;
