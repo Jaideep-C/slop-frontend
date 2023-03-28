@@ -68,7 +68,7 @@ function Clubs() {
       <br />
       <br />
       <div className="row mx-3">
-        {!clubs ? (
+        {clubs ? (
           clubsList
         ) : (
           <Skeleton

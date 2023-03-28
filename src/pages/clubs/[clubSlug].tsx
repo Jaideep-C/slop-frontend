@@ -1,59 +1,86 @@
 import { Router, useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import type { Club } from "../../util/racha";
-import FakeApiCall from "../../util/racha";
 import Image from "next/image";
 import gstudio from "../../../assets/gstudio.png";
 import Header from "../../components/layout/header";
-import EventCard from "../../components/eventCard";
-import EventCard2 from "../../components/eventCard2";
+import api from "@/util/api";
+import { AuthContext } from "@/components/authProvider";
+import React from "react";
+import Club, { toClub } from "@/data/Club";
+import { getImageLink } from "@/util/image";
+import Event from "@/data/Event";
+import { EventPost } from "@/components/Post";
+import AuthComponent from "@/components/layout/authComp";
 
 function ClubHomePage() {
+  const authContext = React.useContext(AuthContext);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
-  const [dispState, setdispState] = useState("none");
   const [follow, setFollow] = useState("Follow");
   const [followUI, setFollowUI] = useState("btn btn-outline-primary");
   const router = useRouter();
-  const [club, setClub] = useState<Club>();
-  const FollowHandle = () => {
-    if (follow === "Follow") {
+  const [club, setClub] = useState<Club>(undefined!);
+  useEffect(() => {
+    if (!club) return;
+    if (club.userIsFollowing) {
       setFollow("Unfollow");
       setFollowUI("btn btn-outline-dark");
     } else {
       setFollow("Follow");
       setFollowUI("btn btn-outline-primary");
     }
-  };
+  }, [club, club?.userIsFollowing]);
   useEffect(() => {
     if (!router.isReady) return;
     console.log("res");
     setLoading(true);
-    FakeApiCall(
-      `http://localhost:3000/api/clubs/${router.query.clubSlug}`,
-      router.query.clubSlug as string
-    ).then((res) => {
-      console.log(res);
-
-      if (res.status === 200 && res.data) {
-        setClub(res.data);
-      } else {
-        setError(res.message as string);
-      }
-      setLoading(false);
-    });
-    club != undefined
-      ? club.noOfEvents != 0
-        ? setdispState("block")
-        : setdispState("none")
-      : setdispState("none");
+    api
+      .get(`/clubs/${router.query.clubSlug}`, {
+        headers: { Authorization: `Bearer ${authContext.authState}` },
+      })
+      .then((res) => {
+        console.log(res.data);
+        if (res.status === 200) {
+          const club = toClub(res.data);
+          setClub(club);
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }, [router.isReady]);
   if (loading) return <h1>Loading...</h1>;
   if (error || !club) return <h1>Error {error}</h1>;
-
+  const handleFollow = async () => {
+    setClub((prevClub) => {
+      return { ...prevClub, userIsFollowing: true };
+    });
+    const res = await api.post(
+      `/users/${authContext.userId}/follow-club/${club.id}`,
+      {},
+      { headers: { Authorization: `Bearer ${authContext.authState}` } }
+    );
+    if (res.status === 200) return;
+    setClub((prevClub) => {
+      return { ...prevClub, userIsFollowing: false };
+    });
+  };
+  const handleUnFollow = async () => {
+    setClub((prevClub) => {
+      return { ...prevClub, userIsFollowing: false };
+    });
+    const res = await api.delete(
+      `/users/${authContext.userId}/unfollow-club/${club.id}`,
+      { headers: { Authorization: `Bearer ${authContext.authState}` } }
+    );
+    if (res.status === 200) return;
+    setClub((prevClub) => {
+      return { ...prevClub, userIsFollowing: true };
+    });
+  };
   return (
     <div>
-      <Header pageName={club.name} />
+      <Header pageName={club.clubName} />
       <br />
       <br />
       <br />
@@ -62,85 +89,48 @@ function ClubHomePage() {
         <div className="row g-0">
           <div className="col-md-4">
             <Image
-              style={{ height: "200px", width: "200px" }}
+              height="200px"
+              width="200px"
               className="card-img-top"
-              src={gstudio}
+              src={getImageLink(club.profilePicture)}
               alt="Card image cap"
-            ></Image>
+            />
           </div>
           <div className="col-md-8">
             <div className="card-body">
-              <h1 className="card-title">{club.name}</h1>
-              <h6 className="card-text">{club.description}</h6>
-              <button className={followUI} onClick={FollowHandle}>
+              <h1 className="card-title">{club.clubName}</h1>
+              <h6 className="card-text">{club.clubDescription}</h6>
+              <button
+                className={followUI}
+                onClick={() => {
+                  if (club.userIsFollowing) {
+                    handleUnFollow();
+                  } else {
+                    handleFollow();
+                  }
+                }}
+              >
                 {follow}
               </button>
             </div>
           </div>
         </div>
       </div>
-
-      {/* NavTabs */}
-      <ul className="nav nav-tabs" id="myTab" role="tablist">
-        <li className="nav-item" role="presentation">
-          <button
-            className="nav-link active"
-            id="home-tab"
-            data-bs-toggle="tab"
-            data-bs-target="#home-tab-pane"
-            type="button"
-            role="tab"
-            aria-controls="home-tab-pane"
-            aria-selected="true"
-          >
-            Followers
-          </button>
-        </li>
-        <li className="nav-item" role="presentation">
-          <button
-            className="nav-link"
-            id="profile-tab"
-            data-bs-toggle="tab"
-            data-bs-target="#profile-tab-pane"
-            type="button"
-            role="tab"
-            aria-controls="profile-tab-pane"
-            aria-selected="false"
-          >
-            Events{" "}
-            <span style={{ display: dispState }}>({club.noOfEvents})</span>
-          </button>
-        </li>
-      </ul>
-      <div className="tab-content" id="myTabContent">
-        <div
-          className="tab-pane fade show active"
-          id="home-tab-pane"
-          role="tabpanel"
-          aria-labelledby="home-tab"
-          tabIndex={0}
-        >
-          followers content
-        </div>
-        <div
-          className="tab-pane fade show active "
-          id="profile-tab-pane"
-          role="tabpanel"
-          aria-labelledby="profile-tab"
-          tabIndex={0}
-        >
-          <div className="container">
-            <div className="row">
-              {club.events.map((item, value) => {
-                return <EventCard2 key={item.eventName} event={item} />;
-              })}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* NavTabs End */}
+      {/* <EventPost event={new default} /> */}
+      <ClubEvents events={club.events} />
     </div>
   );
 }
-export default ClubHomePage;
+const ClubEvents: React.FC<{ events: Event[] }> = ({ events }) => {
+  if (events.length === 0) return <h1>No Events</h1>;
+  return (
+    <div>
+      <h1>Events</h1>
+      {events.map((event) => (
+        <EventPost event={event} key={event.slug} />
+      ))}
+    </div>
+  );
+};
+
+export default () => <AuthComponent child={ClubHomePage()} />;

@@ -1,4 +1,5 @@
-import { plainToInstance } from "class-transformer";
+import { plainToInstance, Type } from "class-transformer";
+import Event from "./Event";
 
 export default class Club {
   id: string;
@@ -6,6 +7,9 @@ export default class Club {
   clubDescription: string;
   clubSlug: string;
   profilePicture: string;
+  @Type(() => Event)
+  events: Event[];
+  userIsFollowing: boolean;
 }
 
 export function toClubList(jsonArr: string[]): Club[] {
@@ -15,41 +19,3 @@ export function toClubList(jsonArr: string[]): Club[] {
 export function toClub(json: string): Club {
   return plainToInstance(Club, json);
 }
-/*
-
-{user.clubsFollowedByUser.map((club) => {
-  return (
-    <div className="col" key={club.clubSlug}>
-      <div className="p-3 border bg-light">
-        <Image
-          src={getImageLink(club.profilePicture)}
-          alt=""
-          width={100}
-          height={100}
-        />
-        <p>{club.clubName}</p>
-      </div>
-    </div>
-  );
-})}
-
-
-<div className="col">
-<div className="p-3">
-  <div
-    className=" card text-center"
-    style={{ width: "10rem", height: "10rem" }}
-  >
-    <Image src={kala} className="card-img-top" alt="" />
-    <div className="card-body">
-      <p className="card-text">
-        <Link href={""}>
-          <a>Kalakruthi</a>
-        </Link>
-      </p>
-    </div>
-  </div>
-</div>
-</div>
-
-*/
