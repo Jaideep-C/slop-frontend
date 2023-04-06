@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { StudentLifeLogo, UserIcon } from "../assets";
@@ -15,7 +15,19 @@ import {
 
 const Header: React.FC<{ pageName: string }> = ({ pageName }) => {
   const authContext = React.useContext(AuthContext);
-
+  const [userIsClubAdmin, setUserIsClubAdmin] = React.useState(false);
+  useEffect(() => {
+    api
+      .get(`/users/${authContext.userId}/is-club-admin`, {
+        headers: { Authorization: `Bearer ${authContext.authState}` },
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          console.log(res.data);
+          setUserIsClubAdmin(res.data);
+        }
+      });
+  }, []);
   return (
     <nav className="navbar navbar-expand-sm bg-light p-0 fixed-top">
       <div className="container-fluid p-0">
@@ -91,13 +103,17 @@ const Header: React.FC<{ pageName: string }> = ({ pageName }) => {
         </nav>
 
         {/* Create a POST */}
-        <div className="btn-group">
-          <Link href="/clubs/submit">
-            <button className="btn btn-light btn-lg" type="button">
-              <FontAwesomeIcon icon={solid("square-plus")} />
-            </button>
-          </Link>
-        </div>
+        {userIsClubAdmin ? (
+          <div className="btn-group">
+            <Link href="/clubs/submit">
+              <button className="btn btn-light btn-lg" type="button">
+                <FontAwesomeIcon icon={solid("square-plus")} />
+              </button>
+            </Link>
+          </div>
+        ) : (
+          <div style={{ width: 200 }} />
+        )}
 
         {/* PROFILE  */}
         <div className="btn-group ">

@@ -83,7 +83,7 @@ function Home() {
         <div className="container text-center">
           <div className="btn-group btn-rounded" role="group">
             <div className="dropdown">
-              <button
+              {/* <button
                 className="btn btn-light btn-rounded dropdown-toggle mx-1 px-4"
                 type="button"
                 data-bs-toggle="dropdown"
@@ -107,12 +107,13 @@ function Home() {
                     Future
                   </a>
                 </li>
-              </ul>
+              </ul> */}
+              <h1>Events</h1>
               <button
                 className={`btn ${isActive ? "btn-light" : "btn-outline-dark"}`}
                 onClick={() => setIsActive(!isActive)}
               >
-                Hot
+                Hot🔥
               </button>
             </div>
           </div>

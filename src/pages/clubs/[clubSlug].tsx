@@ -124,7 +124,7 @@ function ClubHomePage() {
 const ClubEvents: React.FC<{ events: Event[] }> = ({ events }) => {
   if (events.length === 0) return <h1>No Events</h1>;
   return (
-    <div>
+    <div style={{ marginLeft: "600px" }}>
       <h1>Events</h1>
       {events.map((event) => (
         <EventPost event={event} key={event.slug} />

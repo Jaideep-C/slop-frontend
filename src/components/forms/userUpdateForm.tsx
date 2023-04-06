@@ -59,6 +59,7 @@ const UpdateUserForm: React.FC<{ user: User }> = ({ user }) => {
       },
     });
     if (res.status === 200) {
+      alert("Profile updated successfully");
     } else {
       setErr(res.data.message);
     }
